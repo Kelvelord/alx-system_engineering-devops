@@ -1,1 +1,2 @@
-0x02. Shell, I/O Redirections and filters
+
+This file contains solutin to Shell redirection project

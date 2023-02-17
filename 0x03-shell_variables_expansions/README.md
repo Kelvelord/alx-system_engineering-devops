@@ -1,1 +1,2 @@
-0x03-shell_variables_expansions
+
+This file contains solutin to Shell variable expansion project
