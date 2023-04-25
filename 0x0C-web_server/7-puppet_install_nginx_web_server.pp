@@ -1,63 +1,25 @@
-# Nginx server setup and configuration
-exec { 'Update the apt repository':
-  command => 'apt update',
-  path    => '/usr/bin:/usr/sbin:/bin'
+# Script to install nginx using puppet
+
+package {'nginx':
+  ensure => 'present',
 }
 
-package { 'The web server':
-  ensure          => installed,
-  name            => 'nginx',
-  provider        => 'apt',
-  install_options => ['-y']
+exec {'install':
+  command  => 'sudo apt-get update ; sudo apt-get -y install nginx',
+  provider => shell,
+
 }
 
-file { 'The home page':
-  ensure  => file,
-  path    => '/var/www/html/index.html',
-  mode    => '0744',
-  owner   => 'www-data',
-  content => "Hello World!\n"
+exec {'Hello':
+  command  => 'echo "Hello World!" | sudo tee /var/www/html/index.html',
+  provider => shell,
 }
 
-file { '/var/www/error':
-  ensure  => directory
+exec {'sudo sed -i "s/listen 80 default_server;/listen 80 default_server;\\n\\tlocation \/redirect_me {\\n\\t\\treturn 301 https:\/\/blog.ehoneahobed.com\/;\\n\\t}/" /etc/nginx/sites-available/default':
+  provider => shell,
 }
 
-file { 'The 404 page':
-  ensure  => file,
-  path    => '/var/www/error/404.html',
-  mode    => '0744',
-  owner   => 'www-data',
-  content => "Ceci n'est pas une page\n"
-}
-
-file { 'Nginx server config file':
-  ensure  => file,
-  path    => '/etc/nginx/sites-enabled/default',
-  mode    => '0744',
-  owner   => 'www-data',
-  content =>
-"server {
-	listen 80 default_server;
-	listen [::]:80 default_server;
-	root /var/www/html;
-	index index.html index.htm index.nginx-debian.html;
-	server_name _;
-	location / {
-		try_files \$uri \$uri/ =404;
-	}
-	if (\$request_filename ~ redirect_me){
-		rewrite ^ https://github.com/Djomab/ permanent;
-	}
-	error_page 404 /404.html;
-	location = /404.html {
-		root /var/www/error/;
-		internal;
-	}
-}"
-}
-
-exec { 'Start the server':
-  command => 'service nginx restart',
-  path    => '/usr/bin:/usr/sbin:/bin'
+exec {'run':
+  command  => 'sudo service nginx restart',
+  provider => shell,
 }
