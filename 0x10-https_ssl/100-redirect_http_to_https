@@ -47,5 +47,5 @@ frontend kelvelord-frontend-https
 
 backend kelvelord-backend
         balance roundrobin
-        server 63210-web-01 100.25.19.204:80 check
-        server 63210-web-02 54.157.159.85:80 check
+        server 179645-web-01 54.173.26.191:80 check
+        server 179645-web-02 52.3.255.61:80 check
